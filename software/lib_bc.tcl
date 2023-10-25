@@ -183,8 +183,9 @@ proc CheckBcOk {} {
         -type "Ok Cancel Skip" -entQty 2 -entPerRow 1 -entLab {"ID number     " "Trace number"} -icon /images/info]
     } elseif {$gaSet(readTrace)==0} {
       set ret [DialogBox -title "Read Barcodes" -text "Enter the ETX-220's $gaSet(pair) barcode" -ent1focus 1\
-        -type "Ok Cancel Skip" -entQty 1 -entPerRow 1 -entLab {"ID number     "} -icon /images/info]
-    }   
+        -type "Ok Cancel" -entQty 1 -entPerRow 1 -entLab {"ID number     "} -icon /images/info]
+    } 
+    ## -type "Ok Cancel Skip"    
   	if {$ret == "Cancel" } {
   	  return -2 
   	} elseif {$ret=="Ok"} {
@@ -246,6 +247,15 @@ proc ReadBarcode {} {
     foreach la {1} {
       set barcode [string toupper $gaDBox([set ent$la])]  
       set gaSet(1.barcode$la) $barcode
+      set res [catch {exec $gaSet(javaLocation)/java.exe -jar $::RadAppsPath/checkmac.jar $barcode AABBCCFFEEDD} retChk]
+      puts "CheckMac $barcode res:<$res> retChk:<$retChk>" ; update
+      if {$res=="1" && $retChk=="0"} {
+        puts "No Id-MAC link"
+        set gaSet(1.barcode$la.IdMacLink) "noLink"
+      } else {
+        puts "Id-Mac link or error"
+        set gaSet(1.barcode$la.IdMacLink) "link"
+      }
     }
     puts "ReadBarcode barcode:<$barcode>"
     if {$barcode!="NOTRACEBARC"} {

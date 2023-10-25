@@ -40,6 +40,9 @@ proc BuildTests {} {
       SetTimeDate SetToDefault LoadConfiguration LoadDefaultConfiguration]
   }
   
+  # 10:07 25/10/2023
+  lappend lTestsAllTests Mac_BarCode
+  
   set glTests ""
   set gaSet(TestMode) AllTests
   set lTests [set lTests$gaSet(TestMode)]
@@ -278,12 +281,43 @@ proc CheckMac {run} {
   if {$ret!=0} {
     return $ret
   }
-  puts "CheckMac dbrMac=$gaSet(dbrMac) uutMac=$gaSet(uutMac)"
-  if {$gaSet(dbrMac) != $gaSet(uutMac)} {
-    set gaSet(fail) "DbrMac=$gaSet(dbrMac) UutMac=$gaSet(uutMac)"
+  puts "CheckMac dbrMac=$gaSet(dbrMac) uutMac=$gaSet(1.mac1)"
+  if {$gaSet(dbrMac) != $gaSet(1.mac1)} {
+    set gaSet(fail) "DbrMac=$gaSet(dbrMac) UutMac=$gaSet(1.mac1)"
     set ret -1
   } else {
     set ret 0
   }
+  return $ret
+}
+# ***************************************************************************
+# Mac_BarCode
+# ***************************************************************************
+proc Mac_BarCode {run} {
+  global gaSet  
+  set pair $::pair 
+  puts "Mac_BarCode \"$pair\" "
+  mparray gaSet *mac* ; update
+  mparray gaSet *barcode* ; update
+  set badL [list]
+  set ret -1
+  foreach unit {1} {
+    if ![info exists gaSet($pair.mac$unit)] {
+      set ret [ReadMac]
+      if {$ret!=0} {return $ret}
+    }  
+  } 
+  foreach unit {1} {
+    if {![info exists gaSet($pair.barcode$unit)] || $gaSet($pair.barcode$unit)=="skipped"}  {
+      set ret [ReadBarcode]
+      if {$ret!=0} {return $ret}
+    }  
+  }
+  
+  #set ret [ReadBarcode [PairsToTest]]
+#   set ret [ReadBarcode]
+#   if {$ret!=0} {return $ret}
+  set ret [RegBC]
+      
   return $ret
 }

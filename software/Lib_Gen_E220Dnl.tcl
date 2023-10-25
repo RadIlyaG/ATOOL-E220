@@ -1243,3 +1243,31 @@ proc CheckMacPerf {} {
   return 0
 }  
  
+# ***************************************************************************
+# OpenTeraTerm
+# ***************************************************************************
+proc OpenTeraTerm {comName} {
+  global gaSet
+  set path1 C:\\Program\ Files\\teraterm\\ttermpro.exe
+  set path2 C:\\Program\ Files\ \(x86\)\\teraterm\\ttermpro.exe
+  set path3 C:\\teraterm\\ttermpro.exe
+  if [file exist $path1] {
+    set path $path1
+  } elseif [file exist $path2] {
+    set path $path2  
+  } elseif [file exist $path3] {
+    set path $path3  
+  } else {
+    puts "no teraterm installed"
+    return {}
+  }
+  if {[string match *Dut* $comName] || [string match *Dls* $comName] || [string match *Aux* $comName]} {
+    set baud 9600
+  } else {
+    set baud 115200
+  }
+  regexp {com(\w+)} $comName ma val
+  set val Tester-$gaSet(pair).[string toupper $val] 
+  exec $path /c=[set $comName] /baud=$baud /W="$val" &
+  return {}
+}  

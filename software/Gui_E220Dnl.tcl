@@ -87,6 +87,9 @@ proc GUI {} {
       {radiobutton "Read Traceability ID"  trac {} {} -value 1 -variable gaSet(readTrace)}
       {radiobutton "Don't read Traceability ID" trac {} {} -value 0 -variable gaSet(readTrace)}
     } 
+    "&Terminal" terminal tterminal 0  {
+      {command "UUT" "" "" {} -command {OpenTeraTerm gaSet(comDut)}}        
+    }
    "&About" all about 0 {
       {command "&About" about "" {} -command {About} 
       }
@@ -229,6 +232,8 @@ proc GUI {} {
   bind . <Control-b> {set gaSet(useExistBarcode) 1}
   bind . <Control-p> {ToolsPower on}
   bind . <Control-i> {GuiInventory}
+  
+  .menubar.tterminal entryconfigure 0 -label "UUT: COM $gaSet(comDut)"
 
 #    RLStatus::Show -msg atp
 #   RLStatus::Show -msg fti
@@ -267,6 +272,7 @@ proc ButRun {} {
   pack forget $gaGui(frFailStatus)
   Status ""
   set gaSet(serNum) ""
+  set gaSet(1.barcode1.IdMacLink) ""
   
   set gaSet(act) 1
   console eval {.console delete 1.0 end}
@@ -305,32 +311,41 @@ proc ButRun {} {
   
   set gRelayState red
   IPRelay-LoopRed
-  if {[string match ETX-203AX_RJIO.H.GE30.2S6H.4S6H.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_COV.GE.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_SH.GE30.2SFP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_KOS.GE30.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_TWC.N.GE30.2SFP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-2I-10G_TWC.AC.4SFPP.4SFP4UTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-2I-10G_FT.H.ACDC.4SFPP.12S12U.PTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX.GE.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_CELLCOM.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_SFR2.N.GE30.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_BYT.N.GE30.1SFP1UTP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
-      [string match ETX-203AX_KOS.N.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1} {
-      #[string match ETX-2I-100G* $gaSet(DutInitName)]==1
-      #[string match ETX-203AX_KOS.N.GE30.2SFP.4UTP.tcl $gaSet(DutInitName)]==1
-    set gaSet(log.$gaSet(pair)) c:/logs/${gaSet(logTime)}.txt
-    AddToPairLog $gaSet(pair) "$gaSet(DutFullName)"
-    AddToPairLog $gaSet(pair) "UUT - no barcode"
-    set gaSet(1.barcode1) "noBarcode" 
-  } else {
-    set ret [ReadBarcode]  
-    if {$ret=="-1"} {
-      ## SKIP is pressed, we can continue
-      set ret 0
-      set gaSet(1.barcode1) "skipped" 
-    }  
-  }
+  
+  ## 10:05 25/10/2023
+  # if {[string match ETX-203AX_RJIO.H.GE30.2S6H.4S6H.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_COV.GE.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_SH.GE30.2SFP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_KOS.GE30.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_TWC.N.GE30.2SFP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-2I-10G_TWC.AC.4SFPP.4SFP4UTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-2I-10G_FT.H.ACDC.4SFPP.12S12U.PTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX.GE.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_CELLCOM.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_SFR2.N.GE30.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_BYT.N.GE30.1SFP1UTP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
+      # [string match ETX-203AX_KOS.N.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1} {
+      # #[string match ETX-2I-100G* $gaSet(DutInitName)]==1
+      # #[string match ETX-203AX_KOS.N.GE30.2SFP.4UTP.tcl $gaSet(DutInitName)]==1
+    # set gaSet(log.$gaSet(pair)) c:/logs/${gaSet(logTime)}.txt
+    # AddToPairLog $gaSet(pair) "$gaSet(DutFullName)"
+    # AddToPairLog $gaSet(pair) "UUT - no barcode"
+    # set gaSet(1.barcode1) "noBarcode" 
+  # } else {
+    # set ret [ReadBarcode]  
+    # if {$ret=="-1"} {
+      # ## SKIP is pressed, we can continue
+      # set ret 0
+      # set gaSet(1.barcode1) "skipped" 
+    # }  
+  # }
+  
+  set ret [ReadBarcode]  
+  if {$ret=="-1"} {
+    ## SKIP is pressed, we can continue
+    set ret 0
+    set gaSet(1.barcode1) "skipped" 
+  }  
     
   
   if {![file exists uutInits/$gaSet(DutInitName)]} {
@@ -444,7 +459,12 @@ proc ButRun {} {
     } else {
       Status "Done"  #00ff00 ; #green
     }
-    file rename -force $gaSet(log.$gaSet(pair)) [file rootname $gaSet(log.$gaSet(pair))]-Pass.txt
+    #file rename -force $gaSet(log.$gaSet(pair)) [file rootname $gaSet(log.$gaSet(pair))]-Pass.txt
+    if  {[info exists gaSet(pair)] && [info exists gaSet(log.$gaSet(pair))] && [file exists $gaSet(log.$gaSet(pair))]} {
+      file rename -force $gaSet(log.$gaSet(pair)) [file rootname $gaSet(log.$gaSet(pair))]-Pass.txt
+    }
+    
+    set gaSet(runStatus) Pass
 	  
 	  set gaSet(curTest) ""
 	  set gaSet(startFrom) [lindex $glTests 0]
@@ -452,24 +472,26 @@ proc ButRun {} {
     RLSound::Play information
     Status "The test has been perform"  yellow
   } else {
+    set gaSet(runStatus) Fail 
     if {$ret=="-2"} {
 	    set gaSet(fail) "User stop"
+      set gaSet(runStatus) "" 
 	  }
 	  pack $gaGui(frFailStatus)  -anchor w
 	  $gaSet(runTime) configure -text ""
 	  RLSound::Play fail
 	  Status "Test FAIL"  red
 	  file rename -force $gaSet(log.$gaSet(pair)) [file rootname $gaSet(log.$gaSet(pair))]-Fail.txt       
-    ##27/11/2015 14:32:38   
-#     if {$gaSet(failAnd)=="stay"} {   
-#       set gaSet(startFrom) $gaSet(curTest)
-#     } elseif {$gaSet(failAnd)=="jump2Start"} {   
-#       set gaSet(startFrom) [lindex $glTests 0]
-#     }
+ 
     set gaSet(startFrom) $gaSet(curTest)
     update
   }
-  SendEmail "ETX-2i-10G" [$gaSet(sstatus) cget -text]
+  
+  if {$gaSet(runStatus)!=""} {
+    SQliteAddLine
+  }
+  
+  #SendEmail "ETX-2i-10G" [$gaSet(sstatus) cget -text]
   $gaGui(tbrun) configure -relief raised -state normal
   $gaGui(tbstop) configure -relief sunken -state disabled
   $gaGui(tbpaus) configure -relief sunken -state disabled

@@ -1,6 +1,11 @@
 wm iconify . ; update
 
 set ::RadAppsPath c:/RadApps
+package require registry
+set gaSet(hostDescription) [registry get "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters" srvcomment ]
+set jav [registry -64bit get "HKEY_LOCAL_MACHINE\\SOFTWARE\\javasoft\\Java Runtime Environment" CurrentVersion]
+set gaSet(javaLocation) [file normalize [registry -64bit get "HKEY_LOCAL_MACHINE\\SOFTWARE\\javasoft\\Java Runtime Environment\\$jav" JavaHome]/bin]
+
 
 if 1 {
   set gaSet(radNet) 0
@@ -80,7 +85,8 @@ package require RLSound
 #package require RLScotty ; #RLTcp
 package require ezsmtp
 package require http
-# console show
+package require sqlite3
+
 
 source Gui_E220Dnl.tcl
 source Main_E220Dnl.tcl
@@ -93,6 +99,8 @@ source Lib_DialogBox.tcl
 source Lib_FindConsole.tcl
 source LibEmail.tcl
 source LibIPRelay.tcl
+source lib_SQlite.tcl
+source LibUrl.tcl
 # source Lib_Etx204.tcl
 #source lib_chkDdr.tcl
 

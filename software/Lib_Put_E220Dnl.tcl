@@ -939,7 +939,7 @@ proc ReadMac {} {
     set gaSet(fail) "Read MAC fail"
     return -1
   }
-  set gaSet(uutMac) [join [split $val "-"] ""]
-  puts "ReadMac val:<$val> gaSet(uutMac):<$gaSet(uutMac)>"   
+  set gaSet(1.mac1) [join [split $val "-"] ""]
+  puts "ReadMac val:<$val> gaSet(1.mac1):<$gaSet(1.mac1)>"   
   return 0
 }
