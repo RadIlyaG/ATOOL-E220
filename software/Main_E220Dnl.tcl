@@ -22,7 +22,8 @@ proc BuildTests {} {
       [string match ETX-203AX_KOS.N.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1} {
     set lTestsAllTests [list  SetDownload  SoftwareDownload LoadDefaultConfiguration] 
   } elseif {[string match ETX-2I-10G_TWC.AC.4SFPP.4SFP4UTP.tcl $gaSet(DutInitName)]==1 ||\
-            [string match ETX-203AX.GE.2SFP.4UTP.tcl $gaSet(DutInitName)]==1} {
+            [string match ETX-203AX.GE.2SFP.4UTP.tcl $gaSet(DutInitName)]==1 ||\
+            [string match ETX-2I-B.WR.2SFP.4UTP.RTR.tcl $gaSet(DutInitName)]==1} {
     set lTestsAllTests [list SetDownload SoftwareDownload SW_ID]
   } elseif {[string match ETX-203AX_TWC.N.GE30.2SFP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
             [string match ETX-2I-10G_FT.H.ACDC.4SFPP.12S12U.PTP.tcl $gaSet(DutInitName)]==1 ||\

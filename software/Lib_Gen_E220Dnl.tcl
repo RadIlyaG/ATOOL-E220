@@ -718,7 +718,8 @@ proc RetriveDutFam {{dutInitName ""}} {
             [string match ETX-203AX_BYT.N.GE30.1SFP1UTP.2UTP2SFP.tcl $gaSet(DutInitName)]==1 ||\
             [string match ETX-203AX_ATT.GE30.2SFP.2SFP.X.tcl $gaSet(DutInitName)]==1 ||\
             [string match ETX-2I-100G* $gaSet(DutInitName)]==1 ||\
-            [string match ETX-203AX_KOS.N.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1} {
+            [string match ETX-203AX_KOS.N.GE30.2SFP.2UTP.tcl $gaSet(DutInitName)]==1 ||\
+            [string match ETX-2I-B.WR.2SFP.4UTP.RTR.tcl $gaSet(DutInitName)]==1} {
     set ps AC
   }
   
